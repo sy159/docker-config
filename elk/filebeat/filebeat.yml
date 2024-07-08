@@ -4,19 +4,24 @@ filebeat.inputs:
 - type: filestream
   id: access_json_logs
   enabled: true
+  take_over: true
   paths:
     - /var/logs/access/*.log
   fields:
     source: access
     env: dev
-  # json字段的设置
-  json.keys_under_root: true
-  json.add_error_key: true
-  json.overwrite_keys: true
+  # json配置
+  parsers:
+    - ndjson:
+        keys_under_root: true
+        add_error_key: true
+        overwrite_keys: true  # 发生冲突时，解码的JSON 对象中的值将覆盖Filebeat通常添加的字段（类型、源、偏移量等）。
+        expand_keys: false  # 是否递归扩展json字段
 
 - type: filestream
   id: error_logs
   enabled: true
+  take_over: true
   paths:
     - /var/logs/error/*.log
   parsers:
@@ -29,17 +34,29 @@ filebeat.inputs:
     source: error
     env: dev
 
+# 定义模板的相关信息，用模板可以确保所有索引都有一致的设置和映射。
+setup.template.enabled: true
+setup.template.name: "test_log"
+setup.template.pattern: "test-log-*"
+setup.template.overwrite: false  # 如果有就覆盖
+setup.template.settings:
+  index.number_of_shards: 1  # 我们是单节点所以就搞一个分片，一般分片数 * （副本数+1）为节点数
+  index.number_of_replicas: 0  # 副本数
+
+# 生命周期管理
+setup.ilm.enabled: false
+
 
 output.elasticsearch:
   hosts: [ "http://192.168.0.107:9200"]  # 事件将按循环顺序分发到这些节点。如果一个节点无法访问，事件将自动发送到另一个节点，不是每个节点都发送！！！
   username: "elastic"
   password: "zx.123"
   indices:
-    - index: "log-access-%{+yyyy.MM.dd}"  # 是否需要根据时间分割%{+yyyy.MM.dd}
+    - index: "test-log-access-%{+yyyy.MM.dd}"  # 是否需要根据时间分割%{+yyyy.MM.dd}
       when.equals:
         fields:
           source: "access"
-    - index: "log-error-%{+yyyy.MM.dd}"
+    - index: "test-log-error-%{+yyyy.MM.dd}"
       when.equals:
         fields.source: "error"
 
