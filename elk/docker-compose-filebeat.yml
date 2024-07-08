@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.14.1
+    container_name: filebeat
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '5'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro  # read-only
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./filebeat/data:/usr/share/filebeat/data
+      - /var/lib/docker/containers:/var/lib/docker/containers
+      - ./logs:/var/logs   # 把外部日志挂载到内部，实现日志收集监听(这里禁用做测试，根据情况修改为自己的日志路径)
+    restart: always
+
