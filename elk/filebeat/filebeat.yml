@@ -6,7 +6,7 @@ filebeat.inputs:
   enabled: true
   take_over: true
   paths:
-    - /var/logs/access/access.log
+    - /var/logs/access/access.log  # 如果是写入有分隔，建议监听除了access.log以外的其他文件（/var/logs/access/access-*.log）
   # json配置
   parsers:
     - ndjson:
@@ -24,7 +24,7 @@ filebeat.inputs:
   enabled: true
   take_over: true
   paths:
-    - /var/logs/error/error.log
+    - /var/logs/error/error.log  # 如果是写入有分隔，建议监听除了access.log以外的其他文件（/var/logs/access/error-*.log）
   parsers:
     - multiline:
         type: pattern
@@ -36,14 +36,14 @@ filebeat.inputs:
     from_source: error
     env: dev
 
-# 定义模板的相关信息，用模板可以确保所有索引都有一致的设置和映射。
-setup.template.enabled: true
-setup.template.name: "test_log"
-setup.template.pattern: "test-log-*"
-setup.template.overwrite: false  # 如果有就覆盖
-setup.template.settings:
-  index.number_of_shards: 1  # 我们是单节点所以就搞一个分片，一般分片数 * （副本数+1）为节点数
-  index.number_of_replicas: 0  # 副本数
+# 定义模板的相关信息，可以确保所有索引都有一致的设置和映射。（启动以后同步的是数据流，不启动是到索引）
+setup.template.enabled: false
+#setup.template.name: "test_log"
+#setup.template.pattern: "test-log-*"
+#setup.template.overwrite: false  # 如果有就覆盖
+#setup.template.settings:
+#  index.number_of_shards: 1  # 我们是单节点所以就搞一个分片，一般分片数 * （副本数+1）为节点数
+#  index.number_of_replicas: 0  # 副本数
 
 # 生命周期管理
 setup.ilm.enabled: false
