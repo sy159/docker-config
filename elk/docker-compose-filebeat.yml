@@ -12,7 +12,7 @@ services:
       - /etc/localtime:/etc/localtime:ro  # read-only
       - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
       - ./filebeat/data:/usr/share/filebeat/data
-      - /var/lib/docker/containers:/var/lib/docker/containers
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - ./logs:/var/logs   # 把外部日志挂载到内部，实现日志收集监听(这里禁用做测试，根据情况修改为自己的日志路径)
     restart: always
 

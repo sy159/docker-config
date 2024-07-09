@@ -6,32 +6,34 @@ filebeat.inputs:
   enabled: true
   take_over: true
   paths:
-    - /var/logs/access/*.log
-  fields:
-    source: access
-    env: dev
+    - /var/logs/access/access.log
   # json配置
   parsers:
     - ndjson:
-        keys_under_root: true
+        target: ''  # 如果设置为空，就会把json全部展开，设置了字段就会是target.xxx
         add_error_key: true
         overwrite_keys: true  # 发生冲突时，解码的JSON 对象中的值将覆盖Filebeat通常添加的字段（类型、源、偏移量等）。
-        expand_keys: false  # 是否递归扩展json字段
+        expand_keys: false  # 是否展开所有json
+  fields_under_root: true  # 自定义字段将作为顶级字段存储在输出文档中，而不是分组到fields子词典下。如果自定义字段名称与Filebeat添加的其他字段名称冲突，则自定义字段将覆盖其他字段。
+  fields:
+    from_source: access
+    env: dev
 
 - type: filestream
   id: error_logs
   enabled: true
   take_over: true
   paths:
-    - /var/logs/error/*.log
+    - /var/logs/error/error.log
   parsers:
     - multiline:
         type: pattern
         pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}'  # 匹配的正则表达式，匹配时间开头
         negate: true  # 是否取反，即当不以日期格式开头时
         match: after  # 匹配规则，读取的行不以日期开头时，合并到以日期开头为一行。例如堆栈异常多行信息应当合并为一行消息
+  fields_under_root: true
   fields:
-    source: error
+    from_source: error
     env: dev
 
 # 定义模板的相关信息，用模板可以确保所有索引都有一致的设置和映射。
@@ -54,11 +56,11 @@ output.elasticsearch:
   indices:
     - index: "test-log-access-%{+yyyy.MM.dd}"  # 是否需要根据时间分割%{+yyyy.MM.dd}
       when.equals:
-        fields:
-          source: "access"
+        from_source: "access"
     - index: "test-log-error-%{+yyyy.MM.dd}"
       when.equals:
-        fields.source: "error"
+#        fields.source: "error"
+        from_source: "error"
 
 processors:
   - drop_fields:
