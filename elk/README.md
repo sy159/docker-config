@@ -5,13 +5,10 @@
 elk
 ├── docker-compose-filebeat.yml  # filebeat
 ├── docker-compose.yml  # es+kibana
-├── elasticsearch  # es
-│   ├── data  # 数据
-│   ├── elasticsearch.yml  es配置
-│   └── plugins  # 插件
-├── elk部署安装(es8.14+kibana+filbeat).md
-└── kibana  # kibana目录
-    ├── data  # 数据
+├── elasticsearch
+│   └── elasticsearch.yml  es配置
+├── README.md
+└── kibana
     └── kibana.yml  # kibana配置
 ```
 
