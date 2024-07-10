@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  redis-slave2:
+    image: redis:6.2
+    container_name: redis-slave2
+    ports:
+      - "6381:6379"
+    volumes:
+      - ./redis-slave.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-slave2/data:/data
+    restart: always
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - redis_sentinel_network
+
+  sentinel3:
+    image: redis:6.2
+    container_name: sentinel3
+    ports:
+      - "26379:26379"
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    command: ["redis-sentinel", "/usr/local/etc/redis/sentinel.conf"]
+    networks:
+      - redis_sentinel_network
+
+networks:
+  redis_sentinel_network:
+    driver: bridge

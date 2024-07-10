@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  redis-master:
+    image: redis:6.2
+    container_name: redis-master
+    ports:
+      - "6379:6379"
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '5'
+    volumes:
+      - ./redis-master.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-master/data:/data
+    restart: always
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - redis_sentinel_network
+
+  redis-slave:
+    image: redis:6.2
+    container_name: redis-slave
+    ports:
+      - "6380:6379"
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '5'
+    volumes:
+      - ./redis-slave.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-slave/data:/data
+    restart: always
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - redis_sentinel_network
+
+  sentinel1:
+    image: redis:6.2
+    container_name: sentinel1
+    ports:
+      - "26379:26379"
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '5'
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    command: ["redis-sentinel", "/usr/local/etc/redis/sentinel.conf"]
+    networks:
+      - redis_sentinel_network
+
+  sentinel2:
+    image: redis:6.2
+    container_name: sentinel2
+    ports:
+      - "26380:26379"
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '5'
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    command: [ "redis-sentinel", "/usr/local/etc/redis/sentinel.conf" ]
+    networks:
+      - redis_sentinel_network
+
+networks:
+  redis_sentinel_network:
+    ipam:
+      driver: default
