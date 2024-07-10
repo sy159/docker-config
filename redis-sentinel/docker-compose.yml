@@ -31,6 +31,8 @@ services:
       - ./redis-slave.conf:/usr/local/etc/redis/redis.conf
       - ./redis-slave/data:/data
     restart: always
+    depends_on:
+      - redis-master
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     networks:
       - redis_sentinel_network
@@ -46,6 +48,8 @@ services:
         max-file: '5'
     volumes:
       - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    depends_on:
+      - redis-master
     command: ["redis-sentinel", "/usr/local/etc/redis/sentinel.conf"]
     networks:
       - redis_sentinel_network
@@ -61,11 +65,12 @@ services:
         max-file: '5'
     volumes:
       - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    depends_on:
+      - redis-master
     command: [ "redis-sentinel", "/usr/local/etc/redis/sentinel.conf" ]
     networks:
       - redis_sentinel_network
 
 networks:
   redis_sentinel_network:
-    ipam:
-      driver: default
+    driver: bridge
