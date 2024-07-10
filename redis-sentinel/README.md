@@ -22,6 +22,7 @@ redis-slave.conf
 ~~~
 requirepass xxx # 修改访问密码
 slaveof 192.168.1.10 6379  # 修改主节点地址和端口
+masterauth zx.123  # 设置为主节点的密码requirepass
 ~~~
 
 sentinel.conf
@@ -47,4 +48,10 @@ docker-compose -f docker-compose.yml up -d
 #### 3.2 node2节点部署
 ```shell
 docker-compose -f docker-compose-slave.yml up -d
+```
+
+#### 3.2 校验是否成功
+```shell
+# -a 后面为你的密码
+docker exec -it redis-master redis-cli -a zx.123 INFO replication
 ```
