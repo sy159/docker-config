@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  redis-node1:
+    image: redis:6.2
+    container_name: redis-node1
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '5'
+    volumes:
+      - ./redis-node1.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-node1/data:/data
+    restart: always
+    network_mode: "host"
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+
+
+  redis-node2:
+    image: redis:6.2
+    container_name: redis-node2
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '5'
+    volumes:
+      - ./redis-node2.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-node2/data:/data
+    restart: always
+    network_mode: "host"
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]

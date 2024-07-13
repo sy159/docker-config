@@ -1,11 +1,16 @@
 ## redis cluster 6x版本部署
-这里基于三台服务器node1(192.168.0.10)、node2(192.168.0.11)、node3(192.168.0.12)实现redis cluster(三主三从)部署。
+这里基于三台服务器node1(192.168.0.10)、node2(192.168.0.11)、node3(192.168.0.12)实现redis cluster(三主三从)部署。如果虚拟机测试可切换到virtual目录下，网络模式使用host。
 ### 1. 目录结构
 ```
 redis-cluster
 ├── README.md
 ├── docker-compose.yml
-└── redis.conf
+├── redis.conf
+└── virtual  # 虚拟机测试
+    ├── docker-compose.yml
+    ├── redis-node1.conf
+    └── redis-node2.conf
+
 ```
 ### 2. 根据情况修改redis配置
 常用配置说明
