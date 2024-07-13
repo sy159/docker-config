@@ -46,7 +46,7 @@ docker exec -it redis-node1 redis-cli -a zx.123 --cluster create \
 # 将192.168.0.10:6380作为192.168.0.11:6379的从节点
 # docker exec -it redis-node1 redis-cli -a zx.123 --cluster replicate <主节点ID> 192.168.0.11:6380
 ```
-效果如下:
+
 ![效果图](../images/redis_cluster.png)
 
 ### 5. 验证集群

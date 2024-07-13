@@ -38,3 +38,6 @@ services:
 networks:
   redis_cluster_network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.103.0.0/24
