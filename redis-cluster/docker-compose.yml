@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  redis-node1:
+    image: redis:6.2
+    container_name: redis-node1
+    ports:
+      - "6379:6379"
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '5'
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-node1/data:/data
+    restart: always
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    networks:
+      - redis_cluster_network
+
+  redis-node2:
+    image: redis:6.2
+    container_name: redis-node2
+    ports:
+      - "6380:6379"
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '5'
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-node2/data:/data
+    restart: always
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    networks:
+      - redis_cluster_network
+
+networks:
+  redis_cluster_network:
+    driver: bridge
