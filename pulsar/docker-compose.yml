@@ -51,7 +51,7 @@ services:
     volumes:
       - ./data/bookkeeper:/pulsar/data/bookkeeper
     environment:
-      - clusterName=bookie-cluster
+      - clusterName=pulsar-cluster
       - zkServers=zookeeper:2181
       - metadataServiceUri=metadata-store:zk:zookeeper:2181
       # otherwise every time we run docker compose uo or down we fail to start due to Cookie
@@ -78,7 +78,7 @@ services:
     environment:
       - metadataStoreUrl=zk:zookeeper:2181
       - zookeeperServers=zookeeper:2181
-      - clusterName=broker-cluster
+      - clusterName=pulsar-cluster
       - managedLedgerDefaultEnsembleSize=1
       - managedLedgerDefaultWriteQuorum=1
       - managedLedgerDefaultAckQuorum=1
@@ -94,8 +94,7 @@ services:
       - "6650:6650"
       - "8080:8080"
     command: bash -c "bin/apply-config-from-env.py conf/broker.conf && exec bin/pulsar broker"
-    
+
 networks:
   pulsar_network:
     driver: bridge
-  
